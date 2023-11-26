@@ -1,0 +1,96 @@
+
+############### terminal #############
+
+docker run ime   -> radi run kontejnera
+docker ps list svih aktivnih kontejnera
+docker ps -a list svih kontejnera
+docker stop ime  -> zasutavlja kontejner
+docker rm ime -> brise kontejner
+
+docker images -> lista images
+docker rmi image -> brisanje image ali ne sme ni jedan kontejner da ga korisit
+
+docker pull ime -> samo skida image bez run
+
+kontejner je ziv koliko i proces koji pokrece
+kada se nesto pokvari on radi exit
+
+da bi izvrisili neku komandu u kontejneru treba da radimo
+docker exec ime_kontejenera komanada!
+
+da nastaci sa radom -d komanda za detach mod
+attach takodje
+
+--name nesto menjamo ime docker kontejenera
+
+docker run redis
+povlaci latest
+docker run redis:4.0
+povlaci onaj koji smo specificirali :4.4 je tag
+-i je interactive mozemo da oristimo nesto da nam ispise kontejner
+-t je terminal pa mozemo da ispisujemo nesto  :D
+
+
+docker -v 2_lokacija:Lokacija_u_cont ime_image
+to je da mozemo ako se ugasi slucajno kontejner da posedujemo jos podatke
+da budu presist
+
+docker logs ime_kontejnera ja da pogledamo logove trenutnog kontejnera
+
+
+COPY ima flag --chown --chmod npr ko moze da pise po odredjenim fajlovima
+koja grupa korisnika itd
+
+CMD vs ENTRYPOINT cmd je ono sto se izvrsava kada se radi run
+sta ce biti inicijalni zadatak
+mozemo da predstavimo to i nada se radi run
+docker run image i posle toga idu komande
+ENTRYPOINT je napravljen za dinamiku neko samo sto mozemo da stavimo da je neka komanda inicijalna
+i pose toga sto se nadje posle docker run image ovde on lepi odmah posle ENTRYPOINT
+
+
+cmd i entrypoint su namenjeni za istu stvar samo se malo drugacije koriste :D
+
+
+.dockerignore da se tokom bilda image ne koriste neke stvari ne treba venv da se prebacuje mozda :D
+tako neke stvari
+
+Sve sto napisemo svaka nova linija je neki novi layer tokom bildanje
+
+
+FROM -> omogucava da skinemo nesto python/ ubuntu (ako se skida sistem on nece odmah da radi jer je sistem nije proces koji traje
+RUN izvrsava neku komandu koju bi u terminalu/shell u kucali npr neki sudo apt upgrade
+RUN moze da ima neki mount da se nakacimo negde na fajlsistem za hot reload
+da se povezuju kredencijali za aws svasta nesto
+
+CMD je nesto sto bi se iz terminala izvrsavati echo FLASK run itd
+
+CMD ne menja nista tokom bilda nego kada se pokrece kontejner
+da mu setuje neko inicijalno stanje
+
+AKO imamo vise CMD onaj poslednji ce se izvrsiti !!!
+EXPOSE je koji bi trebao port da se zauzme
+Sluzi kao dokumentacija da korsinici kontejnera znaju na kom portu ce da slusa kontejner
+
+ENV sluzi da stavimo neke varijable i koristimo
+
+ADD sluzi za prebacivanje fajlova sa sistema na docker image --chown za permisije flag 7 rwe 5 re 0 nista
+COPY isto sto i ADD
+
+ENTRYPOINT je da se krene izvrsavanje servisa nako sto se odradi docker run
+
+ENTRYPOINT should be defined when using the container as an executable.
+
+CMD should be used as a way of defining default arguments for an ENTRYPOINT command or for executing an ad-hoc command in a container.
+
+WORKDIR setuje koji ce biti radni direktorijum
+
+VOLUME specificira se neko mesto gde se nece gubiti podaci kada se ugasi kontejner
+ne moze da se korsiti da se poveze to se radi u compose ili docker run -v local code :/kontejner code
+
+
+HEALTHCHECK kako da kontejner proveri koje je stanje
+ONBUILD je sto na EelceticIQ imamo da mora da zavisi od necega kada se builda ili runuje kontejner
+izbaci gresku
+
+
