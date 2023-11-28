@@ -1,17 +1,23 @@
 from flask import Flask
+from flask_redis import FlaskRedis
+import redis
 
 app = Flask(__name__)
-
-
-@app.route('/')
+app.config['FLASK_DEBUG'] = 1
+app.config['REDIS_URL'] = "redis://redis:6379/0"
+re = FlaskRedis(app)
+@app.route('/set')
 def index():
+    re.set('name' , "Cane")
     return "hello app"
+
 
 
 @app.route('/hello')
 def hello():
-    return "hello from flask"
+    name = re.get('name').decode()
+    return f"hello from {name}"
 
-
-if __name__ == "__main__":
-    app.run(port=5001)
+@app.route('/sada')
+def start():
+    return "We need sada aaa host and port"

@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  web_app:
+      image: web_app
+      depends_on:
+        redis:
+           condition: service_healthy
+      ports:
+        - "5000:5000"
+      environment:
+        - REDIS_URL='redis://:test@redis:6379'
+      volumes:
+        - ./:/app
+  redis:
+
+    image: redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    environment:
+      - REDIS_PORT=6379
+    ports:
+      - "6379:6379"
+
+

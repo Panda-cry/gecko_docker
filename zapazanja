@@ -94,3 +94,101 @@ ONBUILD je sto na EelceticIQ imamo da mora da zavisi od necega kada se builda il
 izbaci gresku
 
 
+$$$$$$$$$$$$$$$ DOCKER COMPOSE @@@#@@@@@@@@@@@@@@@@@@@@@@@@@@
+da ne bi morali da radimo sve iz terminala i da kuckamo komande
+mozemo da iskoristi mo docker compose da odradi za nas
+da bilda servise da ih uveze da postavi volue itd
+
+ranije kada treba da web app koristi neki postgres npr
+docker ima dns koji moze da prepozna ali pre toga trebamo da podignemo
+neki postgres tj neku bazu podataka
+
+npr mozemo da napravimo neki interni network u kome ce biti povezane odredjene app
+zamisao je da se kreira jedan box za te app i da to predstavlja taj odredjeni network
+
+dok i dalje mozemo da im pristupamo preko naziva
+
+ranije dok se radio docker run morali smo da stavljamo flag ---link da bi uvezali 2 app
+sa odredjenim name
+jer onda moramo da radimo docker run --name i da pazimo da ne promasimo nesto
+
+sa docker compose to ne treba
+
+
+
+VOLUMES
+mozemo da kopiramo neku bazu podataka jer image je read only
+i sluzi za bildanje samo i od njega se radi run kontejnera
+ali da ser adi neka promena koda u kontejneru nakon gasenja kontejnera
+sve promene se brisu
+zato imamo volimes onda povezemo tu kopiju i tu krene da se cuvaju sve promene
+nakon gasenja kontejnera ostaje sve u njemu tj u vlumes :D
+
+DOCKER STORAGE
+kada se radi bild u storage se cuvaju neki hash fajlovi
+i ako se povlaci neki drugi image tokom build image mozemo docker vrv pogleda
+da li ima taj hash i ne mora ponovo da povlaci jer tako stedi memoriju
+Takodje svaki kontejner je novi namespace izolovan je ali u pozadini svaki pid koji se napravi
+posto nije VM kreira se pid na lokalnoj masini i tako samo sto kontejner to ne zna i ne vidi
+linux ima jedan PID to je da je sistem boot-ovan i ostali PID se ubacuju u listu PID ali kreiranih od 1 PID-a
+
+ORCHESTRATION
+pojam kao sto je gunicorn/nginx
+gde imamo vise instanci nase app i radimo load balancing ali to se ne radi nista rucno nego
+to radi neka aplokacija za nas
+Takodje podizanje ponovo servisa ako padne itd. Kubernetis je najbolji jer mnogi
+imaju support za njega on u osnovi korsiti docker host!!
+imamo i docker swarm koji je jednostavniji ali preporuka je za kubernetis :D
+
+DOCKER - COMPOSE sa dokomentacije -> :D
+
+
+environment: varijabla setuje neke stvari vezane za env
+mozemo da preuzmemo iz nekog env_fajla
+docker compose prepoznaje .env fajl pa ce pre ucitavanja da odradi load za nas
+
+ili mozemo da imamo env_file kao varijavlu i posledimo putanju do tog fajla i compose ce
+setovati ceo env za nas
+
+service :
+apstraktna vrednost koja opisuje app koji zelimo da podigneko u kontejneru
+-command pretaba vresnost koja je u dockerfile
+container_name ime kontejnera a ne default vredonst
+deponds_on da se zna redosled kako bilda i gasi kontejnere i on ima neke svoje flegove
+da proveri da li je podignut lepo ako nije moze restart moze svasta takodje trebalo bi onda da se stavi
+health check da se vidi kako proverava da li radi
+entrypoint isto kao command pretaba ono sto je iz DOCKERFILE
+extends moze da se uzme neka konfiguracija iz drugog compose fajla
+HEALTCHcheck pretaba dockerfile ali moze i iz compose
+image sta se povlaci
+links ne treba ako su svi stavljeni na default network
+loging kako se loguje kada se podize app
+ports koji port ce biti mapiran localhost:kontejner
+restrat kada moze da se resetuje
+secrets neki fajl kome treba da bude restrikcija pristupa
+ali to koliko vidim korsti kubernetes swarm
+
+volumes se korisit da povezemo nesto npr lokalni kod sa kodom kontejnera
+da ne moram da buildamo image pa ponovo kontejner ima taj hotreload
+isto ako je nesto bilo u bazi moze da se load odradi sa volume
+tako da je presistent obezbedjeno cak iako padne neki kontejer za bazu
+
+network sluze da organizujemo nase kontejnere da znamo ko sa kime komunicira
+da povcamo bezbednost
+dok 2 kontejnera mogu da komuniciraju preko dns tj preko imena ne moraju da se pamte ip
+adrese
+
+
+postoje jos neke konfiguracije ali to su bas neki specificni slucajevi
+i advanced options sto mislim da nece trebati jer je srednji nivo sasvim dovoljan
+
+za hot reload treba da se omoguci debug true da bude
+takodje da bi pogodili ja nisam stavio host = 0000 i port pa je onda bilo nesto lose
+i nisam mogao da pogodim app
+zasto je potrebno
+jer je kontejner izlovana stvar i odaradi se flask run i nema sta
+ovako kada se odradi host i port flask run zna da je 0000 bilo sta da padne ima da obradi na portu 5000
+jos kada expose 5000
+znamo da ce interno na 172..sto je adresa dockera da bude mapirano lepo
+
+za volumes samo da se isprati putanja lepo i putanja sto je u DOCKERFILE da se ne promasi
